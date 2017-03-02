@@ -39,14 +39,26 @@ export function generateSource(context) {
 
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
   generator.printOnNewline('/* tslint:disable */');
-
+  generator.printOnNewline('import gql from "graphql-tag";');
+  generator.printOnNewline('import { registerQuery, registerMutation } from "../../lib/client/apollo-stuff";');
+    
   typeDeclarationForGraphQLType(context.typesUsed.forEach(type =>
     typeDeclarationForGraphQLType(generator, type)
   ));
-  Object.values(context.operations).forEach(operation => {
-    interfaceVariablesDeclarationForOperation(generator, operation);
+    Object.values(context.operations).forEach(operation => {
+    const opName = operation.operationName;
+    const hasVariables = interfaceVariablesDeclarationForOperation(generator, operation);
     interfaceDeclarationForOperation(generator, operation);
-  });
+    generator.printNewline();
+    const docName = `${opName}Document`;
+    const fragments = operation.fragmentsReferenced.map(name => context.fragments[name].source).join('\n');
+    generator.printOnNewline(`const ${docName} = gql\`${fragments} ${operation.source}\`;`);
+    const ifName = interfaceNameFromOperation(operation);    
+    generator.printNewline();
+    const variablesIfName = hasVariables ? ifName + "Variables" : "{}";
+    const register = (operation.operationType === 'mutation') ? 'registerMutation' : 'registerQuery'
+    generator.printOnNewline(`export const ${opName} = ${register}<${variablesIfName}, ${ifName}>(${docName});`);
+  })
   Object.values(context.fragments).forEach(operation =>
     interfaceDeclarationForFragment(generator, operation)
   );
@@ -120,7 +132,7 @@ export function interfaceVariablesDeclarationForOperation(
   }
 ) {
   if (!variables || variables.length < 1) {
-    return null;
+    return false;
   }
   const interfaceName = `${interfaceNameFromOperation({operationName, operationType})}Variables`;
 
@@ -130,6 +142,7 @@ export function interfaceVariablesDeclarationForOperation(
     const properties = propertiesFromFields(generator.context, variables);
     propertyDeclarations(generator, properties, true);
   });
+  return true;
 }
 
 export function interfaceDeclarationForOperation(
