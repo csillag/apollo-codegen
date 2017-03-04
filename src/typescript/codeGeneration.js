@@ -160,7 +160,7 @@ export function interfaceDeclarationForOperation(
   const interfaceName = interfaceNameFromOperation({operationName, operationType});
   interfaceDeclaration(generator, {
     interfaceName,
-    extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
+    extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}`) : null,
   }, () => {
     const properties = propertiesFromFields(generator.context, fields);
     propertyDeclarations(generator, properties, true);
@@ -178,11 +178,11 @@ export function interfaceDeclarationForFragment(
     source,
   }
 ) {
-  const interfaceName = `${pascalCase(fragmentName)}Fragment`;
+  const interfaceName = `${pascalCase(fragmentName)}`;
 
   interfaceDeclaration(generator, {
     interfaceName,
-    extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}Fragment`) : null,
+    extendTypes: fragmentSpreads ? fragmentSpreads.map(f => `${pascalCase(f)}`) : null,
   }, () => {
     const properties = uniqWith(propertiesFromFields(generator.context, fields)
     .concat(...(inlineFragments || []).map(fragment =>

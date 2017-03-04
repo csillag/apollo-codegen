@@ -23,7 +23,7 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
       generator.print(' Array<');
     }
     if (fragmentSpreads && fragmentSpreads.length > 0) {
-      generator.print(` ${fragmentSpreads.map(n => `${n}Fragment`).join(' & ')} &`);
+      generator.print(` ${fragmentSpreads.map(n => `${n}`).join(' & ')} &`);
     }
     generator.pushScope({ typeName: propertyName });
     generator.withinBlock(closure);
@@ -35,7 +35,7 @@ export function propertyDeclaration(generator, { propertyName, typeName, descrip
       generator.print(' | null');
     }
   } else if (fragmentSpreads && fragmentSpreads.length > 0) {
-    generator.printOnNewline(`${propertyName}: ${isArray ? 'Array<' : ''}${fragmentSpreads.map(n => `${n}Fragment`).join(' & ')}${isArray ? '>' : ''}`);
+    generator.printOnNewline(`${propertyName}: ${isArray ? 'Array<' : ''}${fragmentSpreads.map(n => `${n}`).join(' & ')}${isArray ? '>' : ''}`);
   } else {
     generator.printOnNewline(`${propertyName}: ${typeName}`);
   }
