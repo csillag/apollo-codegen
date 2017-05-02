@@ -39,7 +39,6 @@ export function generateSource(context) {
 
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
   generator.printOnNewline('/* tslint:disable */');
-  generator.printOnNewline('import gql from "graphql-tag";');
   generator.printOnNewline('import { registerQuery, registerMutation } from "../../lib/client/apollo-stuff";');
     
   typeDeclarationForGraphQLType(context.typesUsed.forEach(type =>
@@ -52,7 +51,7 @@ export function generateSource(context) {
     generator.printNewline();
     const docName = `${opName}Document`;
     const fragments = operation.fragmentsReferenced.map(name => context.fragments[name].source).join('\n');
-    generator.printOnNewline(`const ${docName} = gql\`${fragments} ${operation.source}\`;`);
+    generator.printOnNewline(`const ${docName} = \`${fragments} ${operation.source}\`;`);
     const ifName = interfaceNameFromOperation(operation);    
     generator.printNewline();
     const variablesIfName = hasVariables ? ifName + "Variables" : "{}";
