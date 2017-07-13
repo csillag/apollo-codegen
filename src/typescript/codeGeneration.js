@@ -34,12 +34,24 @@ import {
   typeNameFromGraphQLType,
 } from './types';
 
+
+function getRegisterFunction(operationType) {
+    switch (operationType) {
+    case "mutation":
+        return "registerMutation";
+    case "subscription":
+        return "registerSubscription";
+    default:
+        return "registerQuery";
+    }
+}
+
 export function generateSource(context) {
   const generator = new CodeGenerator(context);
 
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
   generator.printOnNewline('/* tslint:disable */');
-  generator.printOnNewline('import { registerQuery, registerMutation } from "../../lib/client/apollo-stuff";');
+  generator.printOnNewline('import { registerQuery, registerMutation, registerSubscription } from "../../lib/client/apollo-stuff";');
     
   typeDeclarationForGraphQLType(context.typesUsed.forEach(type =>
     typeDeclarationForGraphQLType(generator, type)
@@ -55,7 +67,7 @@ export function generateSource(context) {
     const ifName = interfaceNameFromOperation(operation);    
     generator.printNewline();
     const variablesIfName = hasVariables ? ifName + "Variables" : "{}";
-    const register = (operation.operationType === 'mutation') ? 'registerMutation' : 'registerQuery'
+    const register = getRegisterFunction(operation.operationType);
     generator.printOnNewline(`export const ${opName} = ${register}<${variablesIfName}, ${ifName}>(${docName});`);
   })
   Object.values(context.fragments).forEach(operation =>
