@@ -38,11 +38,11 @@ import {
 function getRegisterFunction(operationType) {
     switch (operationType) {
     case "mutation":
-        return "registerMutation";
+        return "registerMutationOperation";
     case "subscription":
         return "registerSubscription";
     default:
-        return "registerQuery";
+        return "registerQueryOperation";
     }
 }
 
@@ -51,7 +51,7 @@ export function generateSource(context) {
 
   generator.printOnNewline('//  This file was automatically generated and should not be edited.');
   generator.printOnNewline('/* tslint:disable */');
-  generator.printOnNewline('import { registerQuery, registerMutation, registerSubscription } from "../../lib/client/apollo-stuff";');
+  generator.printOnNewline('import { registerQueryOperation, registerMutationOperation, registerSubscription } from "../../lib/client/apollo-stuff";');
     
   typeDeclarationForGraphQLType(context.typesUsed.forEach(type =>
     typeDeclarationForGraphQLType(generator, type)
